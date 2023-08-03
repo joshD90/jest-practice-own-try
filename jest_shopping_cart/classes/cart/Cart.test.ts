@@ -3,30 +3,25 @@ import Cart from "./Cart";
 
 import { Product } from "../productClass/Product";
 
-const mockGetProduct = jest.fn(() => ({
-  getPrice: mockGetProductPrice,
-  getName: mockGetProductName,
-}));
-
-const mockGetProductPrice = jest.fn();
-const mockGetProductName = jest.fn();
-const mockGetProductQuantity = jest.fn();
+const mockSetQuantity = jest.fn();
+const mockUpdateTotals = jest.fn();
 
 jest.mock("../productClass/Product.ts", () => {
   return {
-    Product: jest.fn().mockImplementation(() => ({
-      getPrice: mockGetProductPrice,
-      getName: mockGetProductName,
+    Product: jest.fn((id: number, name: string, price: number) => ({
+      getPrice: jest.fn().mockReturnValue(price),
+      getName: jest.fn().mockReturnValue(name),
     })),
   };
 });
 
 jest.mock("../cartItem/CartItem.ts", () => {
   return {
-    CartItem: jest.fn().mockImplementation(() => ({
-      getProduct: mockGetProduct,
-      getQuantity: mockGetProductQuantity,
-      setQuantity: jest.fn(),
+    CartItem: jest.fn((product: Product, quantity: number) => ({
+      getProduct: jest.fn().mockReturnValue(product),
+      getQuantity: jest.fn().mockReturnValue(quantity),
+      setQuantity: mockSetQuantity,
+      updateTotals: mockUpdateTotals,
     })),
   };
 });
@@ -39,22 +34,12 @@ describe("test suite for Cart Class", () => {
   let cartItem2: CartItem;
 
   beforeEach(() => {
-    mockGetProductQuantity.mockImplementation(() => 1);
-    mockGetProductPrice.mockImplementation(() => 200);
-
     mockedProduct1 = new Product(1, "Product A", 100);
     mockedProduct2 = new Product(2, "Product B", 200);
 
-    const mockGetProduct1Name = jest.fn();
-    mockGetProduct1Name.mockReturnValue("Product 1");
-    mockedProduct1.getName = mockGetProduct1Name;
-
-    const mockGetProduct2Name = jest.fn();
-    mockGetProduct2Name.mockReturnValue("Product 2");
-    mockedProduct2.getName = mockGetProduct2Name;
-
     cartItem1 = new CartItem(mockedProduct1, 2);
     cartItem2 = new CartItem(mockedProduct2, 2);
+
     sut = new Cart([cartItem1, cartItem2]);
   });
 
@@ -62,31 +47,32 @@ describe("test suite for Cart Class", () => {
 
   it("should create a proper cart with working getters", () => {
     expect(sut.getCartItems()).toHaveLength(2);
-    expect(sut.getTotalItems()).toBe(2);
-    expect(sut.getTotalPrice()).toBe(400);
-    expect(sut.getTotalPriceString()).toBe("€4.00");
-  });
-
-  it("should add an item in correctly when the name is different", () => {
-    //create a dummy product
-    const mockedProduct3 = new Product(0, "", 0);
-    const mockedCartItem3 = new CartItem(mockedProduct3, 3);
-
-    const mockGetProduct3Name = jest.fn();
-    mockGetProduct3Name.mockReturnValue("Product 3");
-    mockedProduct1.getName = mockGetProduct3Name;
-
-    sut.addCartItem(mockedCartItem3);
-
-    expect(sut.getCartItems()).toHaveLength(3);
-    expect(sut.getTotalItems()).toBe(3);
+    expect(sut.getTotalItems()).toBe(4);
     expect(sut.getTotalPrice()).toBe(600);
     expect(sut.getTotalPriceString()).toBe("€6.00");
   });
 
+  it("should add an item in correctly when the name is different", () => {
+    //create a dummy product
+    const mockedProduct3 = new Product(3, "Product C", 500);
+    const mockedCartItem3 = new CartItem(mockedProduct3, 3);
+
+    sut.addCartItem(mockedCartItem3);
+
+    expect(sut.getCartItems()).toHaveLength(3);
+    expect(sut.getTotalItems()).toBe(7);
+    expect(sut.getTotalPrice()).toBe(2100);
+    expect(sut.getTotalPriceString()).toBe("€21.00");
+  });
+
   it("should merge and add quantities if the names match", () => {
+    const updateTotalsSpy = jest.spyOn(sut, "updateTotals" as keyof Cart);
+
     sut.addCartItem(cartItem1);
 
     expect(sut.getCartItems()).toHaveLength(2);
+    expect(mockSetQuantity).toBeCalledTimes(1);
+    expect(mockSetQuantity).toBeCalledWith(4);
+    expect(updateTotalsSpy).toBeCalledTimes(1);
   });
 });

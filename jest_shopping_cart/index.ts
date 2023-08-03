@@ -10,17 +10,18 @@ const cartItem2 = new CartItem(product2, 1);
 
 const cart = new Cart();
 
-console.log(cart.getCartItems(), "getCartitems");
-console.log(cart.getTotalItems(), "getTotalItems");
-console.log(cart.getTotalPrice(), "getTotalPrice");
+// console.log(cart.getCartItems(), "getCartitems");
+// console.log(cart.getTotalItems(), "getTotalItems");
+// console.log(cart.getTotalPrice(), "getTotalPrice");
 
 cart.addCartItem(cartItem1);
 
-console.log(cart.getCartItems(), "getCartitems");
-console.log(cart.getTotalItems(), "getTotalItems");
-console.log(cart.getTotalPrice(), "getTotalPrice");
+// console.log(cart.getCartItems(), "getCartitems");
+// console.log(cart.getTotalItems(), "getTotalItems");
+// console.log(cart.getTotalPrice(), "getTotalPrice");
 
 cart.addCartItem(cartItem2);
-console.log(cart.getCartItems(), "getCartitems");
+cart.addCartItem(cartItem1);
+console.log(cart.getCartItems().length, "getCartitems length");
 console.log(cart.getTotalItems(), "getTotalItems");
 console.log(cart.getTotalPrice(), "getTotalPrice");

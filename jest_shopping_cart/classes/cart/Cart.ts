@@ -16,12 +16,16 @@ class Cart {
   }
 
   public addCartItem(cartItem: CartItem) {
-    const indexOfItem = this.cartItems.findIndex(
-      (item) => item.getProduct().getName() === cartItem.getProduct().getName()
-    );
+    const indexOfItem = this.cartItems.findIndex((item) => {
+      return item.getProduct().getName() === cartItem.getProduct().getName();
+    });
     if (indexOfItem === -1) {
       this.cartItems = [...this.cartItems, cartItem];
     } else {
+      console.log(
+        cartItem.getQuantity(),
+        this.cartItems[indexOfItem].getQuantity()
+      );
       this.cartItems[indexOfItem].setQuantity(
         cartItem.getQuantity() + this.cartItems[indexOfItem].getQuantity()
       );
@@ -52,13 +56,10 @@ class Cart {
     if (this.cartItems.length === 0) return 0;
     const accumulatedItems = this.cartItems.reduce(
       (accumulator, currentValue) => {
-        console.log(currentValue, "currentValue");
-        console.log(currentValue.getQuantity());
         return accumulator + currentValue.getQuantity();
       },
       0
     );
-
     return accumulatedItems;
   }
 
