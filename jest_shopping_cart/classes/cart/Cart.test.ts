@@ -40,7 +40,7 @@ describe("test suite for Cart Class", () => {
     cartItem1 = new CartItem(mockedProduct1, 2);
     cartItem2 = new CartItem(mockedProduct2, 2);
 
-    sut = new Cart([cartItem1, cartItem2]);
+    sut = new Cart("joshCart", [cartItem1, cartItem2]);
   });
 
   afterEach(() => jest.clearAllMocks());
@@ -74,5 +74,18 @@ describe("test suite for Cart Class", () => {
     expect(mockSetQuantity).toBeCalledTimes(1);
     expect(mockSetQuantity).toBeCalledWith(4);
     expect(updateTotalsSpy).toBeCalledTimes(1);
+  });
+
+  it("should remove a cart item from the list", () => {
+    const updateTotalsSpy = jest.spyOn(sut, "updateTotals" as keyof Cart);
+
+    sut.removeCartItem(cartItem1);
+
+    expect(sut.getCartItems()).toHaveLength(1);
+    expect(updateTotalsSpy).toBeCalledTimes(1);
+    expect(sut.getCartItems()[0]).toBeTruthy();
+    expect(sut.getCartItems()[0].getProduct().getName()).toBe("Product B");
+    expect(sut.getTotalItems()).toBe(2);
+    expect(sut.getTotalPrice()).toBe(400);
   });
 });

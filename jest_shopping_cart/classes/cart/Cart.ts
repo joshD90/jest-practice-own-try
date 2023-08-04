@@ -1,12 +1,14 @@
 import { CartItem } from "../cartItem/CartItem";
 
 class Cart {
+  private cartName: string;
   private cartItems: CartItem[];
   private totalPrice: number;
   private totalPriceString: string;
   private totalItems: number;
 
-  constructor(cartItems?: CartItem[]) {
+  constructor(cartName: string, cartItems?: CartItem[]) {
+    this.cartName = cartName;
     if (!cartItems) {
       this.cartItems = [];
     } else {
@@ -85,6 +87,13 @@ class Cart {
   }
   public getTotalPriceString(): string {
     return this.totalPriceString;
+  }
+  public getCartName(): string {
+    return this.cartName;
+  }
+
+  public setCartName(name: string) {
+    this.cartName = name;
   }
 }
 
