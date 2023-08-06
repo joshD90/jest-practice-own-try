@@ -1,26 +1,18 @@
 import Cart from "../cart/Cart";
 import User from "./User";
 
+//correct way to mock
 jest.mock("../cart/Cart", () => {
-  return function () {
-    return {
-      __esModule: true,
-      default: jest
-        .fn()
-        .mockImplementation(() => ({ getCartName: mockGetCartName })),
-    };
-  };
+  return jest.fn().mockImplementation(() => {
+    return { getCartName: mockGetCartName };
+  });
 });
 
-const mockGetCartName = jest.fn();
+const mockGetCartName = jest.fn().mockReturnValue("cart1");
 
 describe("User class test suite", () => {
   const sut = new User("Josh", 1);
   const cart1 = new Cart("cart1");
-
-  // beforeEach(()=>{
-  //     sut.addCart(cart1);
-  // })
 
   afterEach(() => jest.clearAllMocks());
 

@@ -24,10 +24,6 @@ class Cart {
     if (indexOfItem === -1) {
       this.cartItems = [...this.cartItems, cartItem];
     } else {
-      console.log(
-        cartItem.getQuantity(),
-        this.cartItems[indexOfItem].getQuantity()
-      );
       this.cartItems[indexOfItem].setQuantity(
         cartItem.getQuantity() + this.cartItems[indexOfItem].getQuantity()
       );
@@ -96,5 +92,4 @@ class Cart {
     this.cartName = name;
   }
 }
-
 export default Cart;
